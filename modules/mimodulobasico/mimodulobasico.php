@@ -76,6 +76,41 @@ class MiModuloBasico extends ModuleCore
     }
 
     // PAGINA DE CONFIGURACION DEL MODULO EN EL FRONTEND DEL BACK-OFFICE
-    
+
+    public function renderForm()
+    {
+        $fields_form = [
+            'form' => [
+                'legend' => [
+                    'title' => $this->trans('Configuración'),
+                    'icon' => 'icon-cogs',
+                ],
+                'input' => [
+                    [
+                        'type' => 'text',
+                        'label' => $this->l('Configuración 1'),
+                        'name' => 'MI_MODULO_BASICO_CONFIG_1',
+                        'required' => true
+                    ],
+                    [
+                        'type' => 'text',
+                        'label' => $this->l('Configuración 2'),
+                        'name' => 'MI_MODULO_BASICO_CONFIG_2',
+                        'required' => true
+                    ],
+                    [
+                        'type' => 'text',
+                        'label' => $this->l('Configuración 3'),
+                        'name' => 'MI_MODULO_BASICO_CONFIG_3',
+                        'required' => true
+                    ]
+                ],
+                'submit' => [
+                    'title' => $this->l('Guardar'),
+                    'class' => 'btn btn-default pull-right'
+                ],
+            ],
+        ];
+    }
 
 }
