@@ -27,4 +27,37 @@ class MiModuloBasico extends ModuleCore
         $this->description = $this->l('Este es el primer Módulo creado en el Repaso Prestashop'); // Descripción del modulo en el back office
         $this->confirmUninstall = $this->l('¿Estás seguro de que quieres desinstalar?'); // Mensaje de confirmación de desinstalación
     }
+    public function install()
+    {
+        if (!parent::install())
+        {
+            return false;
+        }
+        // Añadir configuraciones por defecto
+        $defaultConfigurations = array(
+            'MI_MODULO_BASICO_CONFIG_1' => 'Valor de configuración 1',
+            'MI_MODULO_BASICO_CONFIG_2' => 'Valor de configuración 2',
+            'MI_MODULO_BASICO_CONFIG_3' => 'Valor de configuración 3',
+        );
+        foreach($defaultConfigurations as $key => $value)
+        {
+            if (!Configuration::updateValue($key, $value))
+            {
+                return false;
+            }
+        }
+        // Añadimos hooks
+        $hooks = array(
+            'displayHome'
+        );
+        foreach( $hooks as $hook)
+        {
+            if (!$this->registerHook($hook))
+            {
+                return false;
+            }
+        } 
+        
+
+    }
 }
