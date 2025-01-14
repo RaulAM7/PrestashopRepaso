@@ -10,7 +10,7 @@ class MiModuloBasico extends Module
 {
     public function __construct()
     {
-        $this->name = 'Mi Primer Modulo Básico'; // Nombre real del modulo en las interfaces
+        $this->name = 'mimodulobasico'; // Nombre real del modulo en las interfaces
         $this->tab = 'front_office_features'; // Tab del FRONTEND DEL BACK OFFICE en el que se mostrará el modulo
         $this->version = '1.0.0'; // Versión del modulo
         $this->author = 'Github: raulAM'; // Autor del modulo
@@ -30,18 +30,15 @@ class MiModuloBasico extends Module
     // Funcion de instalacion del Modulo
     public function install()
     {
-        if (!parent::install())
-        {
+        if (!parent::install()) {
             return false;
         }
         // Añadir configuraciones por defecto
         $defaultConfigurations = [
             'MI_MODULO_BASICO_CONFIG_UNICA' => 'Valor de configuración UNICA',
         ];
-        foreach($defaultConfigurations as $key => $value)
-        {
-            if (!Configuration::updateValue($key, $value))
-            {
+        foreach ($defaultConfigurations as $key => $value) {
+            if (!Configuration::updateValue($key, $value)) {
                 return false;
             }
         }
@@ -49,10 +46,8 @@ class MiModuloBasico extends Module
         $hooks = array(
             'displayHome'
         );
-        foreach( $hooks as $hook)
-        {
-            if (!$this->registerHook($hook))
-            {
+        foreach ($hooks as $hook) {
+            if (!$this->registerHook($hook)) {
                 return false;
             }
         }
@@ -61,17 +56,19 @@ class MiModuloBasico extends Module
     // Funcion de desinstalacion del Modulo
     public function uninstall()
     {
-        if (!parent::uninstall())
-        {
+        if (!parent::uninstall()) {
             return false;
         }
-        foreach($defaultConfigurations as $key => $value)
-        {
-            if (!Configuration::deleteByName($key))
-            {
+        $defaultConfigurations = [
+            'MI_MODULO_BASICO_CONFIG_UNICA' => 'Valor de configuración UNICA',
+        ];
+        foreach ($defaultConfigurations as $configuration) {
+            if (!Configuration::deleteByName($configuration)) {
                 return false;
             }
         }
+
+        return true;
     }
 
     // PAGINA DE CONFIGURACION DEL MODULO EN EL FRONTEND DEL BACK-OFFICE
@@ -98,7 +95,7 @@ class MiModuloBasico extends Module
                 ],
             ],
         ];
-        
+
         // Configuracion del helperForm de Prestashop
 
         $helper = new HelperForm();
@@ -106,12 +103,11 @@ class MiModuloBasico extends Module
         $helper->name_controller = $this->name;
         $helper->identifier = $this->identifier;
         $helper->token = Tools::getAdminTokenLite('AdminModules'); // Security Token
-        $helper->currentIndex = AdminController::$currentIndex .'&configure=' . $this->name; // Current Index URL
+        $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name; // Current Index URL
         $helper->fields_value['MI_MODULO_BASICO_CONFIG_1'] = Configuration::get('MI_MODULO_BASICO_CONFIG_1'); // Valor actual de la configuracion
         $helper->submit_action = 'submit' . $this->name; // Accion de envio del formulario
 
         return $helper->generateForm([$fields_form]);
-        
     }
 
 
@@ -122,15 +118,13 @@ class MiModuloBasico extends Module
 
         // Procesar el formulario si se ha enviado
 
-        if (Tools::isSubmit('submit' . $this->name))
+        if (Tools::isSubmit('submit' . $this->name)) // Comprueba si se ha enviadoe el formularion con el boton submitMyModule
         {
-            if (Tools::isSubmit(submit: 'submit' . $this->name)) // Comprueba si se ha enviadoe el formularion con el boton submitMyModule
-            {
-                $custom_setting = Tools::getValue('MI_MODULO_BASICO_CONFIG_UNICA');  // Recupera el valor enviado en el formulario
-                Configuration::updateValue('MI_MODULO_BASICO_CONFIG_UNICA', $custom_setting); // Guarda el valor en la base de datos
-                $output .= $this->displayConfirmation($this->l('Configuración actualizada')); // Mensaje de exito 
-            }
+            $custom_setting = Tools::getValue('MI_MODULO_BASICO_CONFIG_UNICA');  // Recupera el valor enviado en el formulario
+            Configuration::updateValue('MI_MODULO_BASICO_CONFIG_UNICA', $custom_setting); // Guarda el valor en la base de datos
+            $output .= $this->displayConfirmation($this->l('Configuración actualizada')); // Mensaje de exito 
         }
+
 
         return $output . $this->renderForm(); // Devuelve el formulario
     }
@@ -143,7 +137,4 @@ class MiModuloBasico extends Module
     {
         return $this->display(__FILE__, 'views/templates/hook/displayHome.tpl');
     }
-
-
 }
-    
