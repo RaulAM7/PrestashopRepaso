@@ -2,11 +2,11 @@
 
 
 // Thew constant test -> Chequea si ahy una versión de Prestashop Preexistente
-if (defined('_PS_VERSION_')) {
+if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class MiModuloBasico extends ModuleCore
+class MiModuloBasico extends Module
 {
     public function __construct()
     {
@@ -55,7 +55,8 @@ class MiModuloBasico extends ModuleCore
             {
                 return false;
             }
-        } 
+        }
+        return true;
     }
     // Funcion de desinstalacion del Modulo
     public function uninstall()
@@ -87,21 +88,9 @@ class MiModuloBasico extends ModuleCore
                     [
                         'type' => 'text',
                         'label' => $this->l('Configuración 1'),
-                        'name' => 'MI_MODULO_BASICO_CONFIG_1',
+                        'name' => 'MI_MODULO_BASICO_CONFIG_UNICA',
                         'required' => true
                     ],
-                    [
-                        'type' => 'text',
-                        'label' => $this->l('Configuración 2'),
-                        'name' => 'MI_MODULO_BASICO_CONFIG_2',
-                        'required' => true
-                    ],
-                    [
-                        'type' => 'text',
-                        'label' => $this->l('Configuración 3'),
-                        'name' => 'MI_MODULO_BASICO_CONFIG_3',
-                        'required' => true
-                    ]
                 ],
                 'submit' => [
                     'title' => $this->l('Guardar'),
@@ -135,7 +124,7 @@ class MiModuloBasico extends ModuleCore
 
         if (Tools::isSubmit('submit' . $this->name))
         {
-            if (Tools::isSubmit(('submit' . $this->name))) // Comprueba si se ha enviadoe el formularion con el boton submitMyModule
+            if (Tools::isSubmit(submit: 'submit' . $this->name)) // Comprueba si se ha enviadoe el formularion con el boton submitMyModule
             {
                 $custom_setting = Tools::getValue('MI_MODULO_BASICO_CONFIG_UNICA');  // Recupera el valor enviado en el formulario
                 Configuration::updateValue('MI_MODULO_BASICO_CONFIG_UNICA', $custom_setting); // Guarda el valor en la base de datos
