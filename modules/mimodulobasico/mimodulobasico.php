@@ -12,7 +12,7 @@ class MiModuloBasico extends Module
     public function __construct()
     {
         $this->name = 'mimodulobasico'; // Nombre real del modulo en las interfaces
-        $this->tab = 'front_office_features'; // Tab del FRONTEND DEL BACK OFFICE en el que se mostrará el modulo
+        $this->tab = 'administration'; // Tab del FRONTEND DEL BACK OFFICE en el que se mostrará el modulo
         $this->version = '1.0.0'; // Versión del modulo
         $this->author = 'Github: raulAM'; // Autor del modulo
         $this->need_instance = 0; // Si es 1, se instanciará el modulo en la página de módulos
@@ -52,6 +52,23 @@ class MiModuloBasico extends Module
                 return false;
             }
         }
+
+        // Crear la TAB pestaña en el Front Office del Back Office
+        $tab = new Tab();
+        $tab->active = 1;
+        $tab->class_name = 'AdminMiModuloBasico';
+        $tab->name = [];
+        foreach(Language::getLanguages() as $lang){
+            $tab->name[$lang['id_lang']] = 'Mi Modulo Basico';
+        }
+        // Asociar a la pestaña a la pestaña padre: Administrador de Modulos
+        $tab->id_parent = (int)Tab::getIdFromClassName('AdminParentModulesSf');
+        $tab->module = $this->name;
+        $tab->icon = 'icon-cogs'; // Puedes cambiar esto por un icono personalizado
+        $tab->add();
+
+
+
         return true;
     }
     // Funcion de desinstalacion del Modulo
