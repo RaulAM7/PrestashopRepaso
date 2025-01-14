@@ -142,6 +142,8 @@ class MiModuloBasico extends ModuleCore
                 $output .= $this->displayConfirmation($this->l('Configuración actualizada')); // Mensaje de exito 
             }
         }
+
+        return $output . $this->renderForm(); // Devuelve el formulario
     }
 
 
