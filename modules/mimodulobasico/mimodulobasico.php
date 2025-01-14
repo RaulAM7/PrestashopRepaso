@@ -35,11 +35,9 @@ class MiModuloBasico extends ModuleCore
             return false;
         }
         // Añadir configuraciones por defecto
-        $defaultConfigurations = array(
-            'MI_MODULO_BASICO_CONFIG_1' => 'Valor de configuración 1',
-            'MI_MODULO_BASICO_CONFIG_2' => 'Valor de configuración 2',
-            'MI_MODULO_BASICO_CONFIG_3' => 'Valor de configuración 3',
-        );
+        $defaultConfigurations = [
+            'MI_MODULO_BASICO_CONFIG_UNICA' => 'Valor de configuración UNICA',
+        ];
         foreach($defaultConfigurations as $key => $value)
         {
             if (!Configuration::updateValue($key, $value))
@@ -128,6 +126,24 @@ class MiModuloBasico extends ModuleCore
     }
 
 
-    
+    // Metodo getContent() -> Recupera la informacion del Form y ejecuta la Congiguracion
+    public function getContent()
+    {
+        $output = '';
+
+        // Procesar el formulario si se ha enviado
+
+        if (Tools::isSubmit('submit' . $this->name))
+        {
+            if (Tools::isSubmit(('submit' . $this->name))) // Comprueba si se ha enviadoe el formularion con el boton submitMyModule
+            {
+                $custom_setting = Tools::getValue('MI_MODULO_BASICO_CONFIG_UNICA');  // Recupera el valor enviado en el formulario
+                Configuration::updateValue('MI_MODULO_BASICO_CONFIG_UNICA', $custom_setting); // Guarda el valor en la base de datos
+                $output .= $this->displayConfirmation($this->l('Configuración actualizada')); // Mensaje de exito 
+            }
+        }
+    }
+
+
 }
     
