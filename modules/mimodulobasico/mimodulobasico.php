@@ -113,7 +113,7 @@ class MiModuloBasico extends ModuleCore
         ];
         
         // Configuracion del helperForm de Prestashop
-        
+
         $helper = new HelperForm();
         $helper->module = $this;
         $helper->name_controller = $this->name;
@@ -122,7 +122,12 @@ class MiModuloBasico extends ModuleCore
         $helper->currentIndex = AdminController::$currentIndex .'&configure=' . $this->name; // Current Index URL
         $helper->fields_value['MI_MODULO_BASICO_CONFIG_1'] = Configuration::get('MI_MODULO_BASICO_CONFIG_1'); // Valor actual de la configuracion
         $helper->submit_action = 'submit' . $this->name; // Accion de envio del formulario
+
+        return $helper->generateForm([$fields_form]);
         
     }
+
+
+    
 }
     
