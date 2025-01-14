@@ -2,6 +2,9 @@
 
 
 // Thew constant test -> Chequea si ahy una versión de Prestashop Preexistente
+
+use PSpell\Config;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -60,7 +63,7 @@ class MiModuloBasico extends Module
             return false;
         }
         $defaultConfigurations = [
-            'MI_MODULO_BASICO_CONFIG_UNICA' => 'Valor de configuración UNICA',
+            'MI_MODULO_BASICO_CONFIG_UNICA',
         ];
         foreach ($defaultConfigurations as $configuration) {
             if (!Configuration::deleteByName($configuration)) {
@@ -78,14 +81,15 @@ class MiModuloBasico extends Module
         $fields_form = [
             'form' => [
                 'legend' => [
-                    'title' => $this->trans('Configuración'),
+                    'title' => $this->trans('Configuración de Mi Modulo Básico'),
                     'icon' => 'icon-cogs',
                 ],
                 'input' => [
                     [
                         'type' => 'text',
-                        'label' => $this->l('Configuración 1'),
-                        'name' => 'MI_MODULO_BASICO_CONFIG_UNICA',
+                        'label' => $this->l('Mensaje personalizado'),
+                        'name' => 'Mi_MODULO_BASICO_MENSAJE',
+                        'size' => 64,
                         'required' => true
                     ],
                 ],
@@ -99,12 +103,13 @@ class MiModuloBasico extends Module
         // Configuracion del helperForm de Prestashop
 
         $helper = new HelperForm();
+        
         $helper->module = $this;
         $helper->name_controller = $this->name;
         $helper->identifier = $this->identifier;
         $helper->token = Tools::getAdminTokenLite('AdminModules'); // Security Token
         $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name; // Current Index URL
-        $helper->fields_value['MI_MODULO_BASICO_CONFIG_1'] = Configuration::get('MI_MODULO_BASICO_CONFIG_1'); // Valor actual de la configuracion
+        $helper->fields_value['MI_MODULO_BASICO_MENSAJE'] = Configuration::get('MI_MODULO_BASICO_CONFIG_1'); // Valor actual de la configuracion
         $helper->submit_action = 'submit' . $this->name; // Accion de envio del formulario
 
         return $helper->generateForm([$fields_form]);
@@ -118,14 +123,19 @@ class MiModuloBasico extends Module
 
         // Procesar el formulario si se ha enviado
 
-        if (Tools::isSubmit('submit' . $this->name)) // Comprueba si se ha enviadoe el formularion con el boton submitMyModule
+        if (Tools::isSubmit('submit' . $this->name)) // Comprueba si se ha enviado el formulario con el boton submitMyModule
         {
             $custom_setting = Tools::getValue('MI_MODULO_BASICO_CONFIG_UNICA');  // Recupera el valor enviado en el formulario
-            Configuration::updateValue('MI_MODULO_BASICO_CONFIG_UNICA', $custom_setting); // Guarda el valor en la base de datos
-            $output .= $this->displayConfirmation($this->l('Configuración actualizada')); // Mensaje de exito 
+            if (|empty(customMessage))
+            {
+                Configuration::updateValue('MI_MODULO_BASICO_CONFIG_UNICA', $custom_setting); // Guarda el valor en la base de datos
+                $output .= $this->displayConfirmation($this->l('Configuración actualizada')); // Mensaje de exito 
+            } else {
+                $output .= $this->displayError($this->l('Error: El campo no puede estar vacío')); // Mensaje de error
+            }
         }
 
-
+        // Genera y devuelve el formulario
         return $output . $this->renderForm(); // Devuelve el formulario
     }
 
@@ -135,6 +145,8 @@ class MiModuloBasico extends Module
     // Hook Básico
     public function hookDisplayHome()
     {
-        return $this->display(__FILE__, 'views/templates/hook/displayHome.tpl');
+        // Modificamos el metodo hookDisplayHome para leer el mensaje configurado por el usuario desde la base de datos
+        $customMessage = Configuration::get('MI_MODULO_BASICO_MENSAJE');
+        return '<div></div>' . htmlspecialchars($customMessage) . '</div>';
     }
 }
