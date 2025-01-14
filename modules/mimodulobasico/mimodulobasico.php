@@ -3,8 +3,6 @@
 
 // Thew constant test -> Chequea si ahy una versión de Prestashop Preexistente
 
-use PSpell\Config;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -88,7 +86,7 @@ class MiModuloBasico extends Module
                     [
                         'type' => 'text',
                         'label' => $this->l('Mensaje personalizado'),
-                        'name' => 'Mi_MODULO_BASICO_MENSAJE',
+                        'name' => 'MI_MODULO_BASICO_CONFIG_UNICA',
                         'size' => 64,
                         'required' => true
                     ],
@@ -109,7 +107,7 @@ class MiModuloBasico extends Module
         $helper->identifier = $this->identifier;
         $helper->token = Tools::getAdminTokenLite('AdminModules'); // Security Token
         $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name; // Current Index URL
-        $helper->fields_value['MI_MODULO_BASICO_MENSAJE'] = Configuration::get('MI_MODULO_BASICO_CONFIG_1'); // Valor actual de la configuracion
+        $helper->fields_value['MI_MODULO_BASICO_CONFIG_UNICA'] = Configuration::get('MI_MODULO_BASICO_CONFIG_UNICA'); // Valor actual de la configuracion
         $helper->submit_action = 'submit' . $this->name; // Accion de envio del formulario
 
         return $helper->generateForm([$fields_form]);
@@ -126,13 +124,13 @@ class MiModuloBasico extends Module
         if (Tools::isSubmit('submit' . $this->name)) // Comprueba si se ha enviado el formulario con el boton submitMyModule
         {
             $custom_setting = Tools::getValue('MI_MODULO_BASICO_CONFIG_UNICA');  // Recupera el valor enviado en el formulario
-            if (|empty(customMessage))
-            {
-                Configuration::updateValue('MI_MODULO_BASICO_CONFIG_UNICA', $custom_setting); // Guarda el valor en la base de datos
-                $output .= $this->displayConfirmation($this->l('Configuración actualizada')); // Mensaje de exito 
+            if (!empty($custom_setting)) {
+                Configuration::updateValue('MI_MODULO_BASICO_CONFIG_UNICA', $custom_setting);
+                $output .= $this->displayConfirmation($this->l('Configuración actualizada'));
             } else {
-                $output .= $this->displayError($this->l('Error: El campo no puede estar vacío')); // Mensaje de error
+                $output .= $this->displayError($this->l('Error: El campo no puede estar vacío'));
             }
+            
         }
 
         // Genera y devuelve el formulario
@@ -146,7 +144,6 @@ class MiModuloBasico extends Module
     public function hookDisplayHome()
     {
         // Modificamos el metodo hookDisplayHome para leer el mensaje configurado por el usuario desde la base de datos
-        $customMessage = Configuration::get('MI_MODULO_BASICO_MENSAJE');
-        return '<div></div>' . htmlspecialchars($customMessage) . '</div>';
+        return $this->display(__FILE__, 'views/templates/hook/displayHome.tpl');
     }
 }
