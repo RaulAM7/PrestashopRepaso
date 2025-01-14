@@ -27,6 +27,7 @@ class MiModuloBasico extends ModuleCore
         $this->description = $this->l('Este es el primer Módulo creado en el Repaso Prestashop'); // Descripción del modulo en el back office
         $this->confirmUninstall = $this->l('¿Estás seguro de que quieres desinstalar?'); // Mensaje de confirmación de desinstalación
     }
+    // Funcion de instalacion del Modulo
     public function install()
     {
         if (!parent::install())
@@ -57,7 +58,24 @@ class MiModuloBasico extends ModuleCore
                 return false;
             }
         } 
-        
-
     }
+    // Funcion de desinstalacion del Modulo
+    public function uninstall()
+    {
+        if (!parent::uninstall())
+        {
+            return false;
+        }
+        foreach($defaultConfigurations as $key => $value)
+        {
+            if (!Configuration::deleteByName($key))
+            {
+                return false;
+            }
+        }
+    }
+
+    // PAGINA DE CONFIGURACION DEL MODULO EN EL FRONTEND DEL BACK-OFFICE
+    
+
 }
