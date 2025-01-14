@@ -147,5 +147,14 @@ class MiModuloBasico extends ModuleCore
     }
 
 
+    // REGISTRO DE HOOKS 
+
+    // Hook Básico
+    public function hookDisplayHome()
+    {
+        return $this->display(__FILE__, 'views/templates/hook/displayHome.tpl');
+    }
+
+
 }
     
