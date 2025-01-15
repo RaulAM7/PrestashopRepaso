@@ -13,10 +13,10 @@ class MiModuloBasicoMessage extends ObjectModel
 
     // Definir la estrucutra de la tabla
     public static $definition = [
-        'table' => 'mimodulobasico_message',
-        'primary' => 'id_mimodulobasico',
-        'fields' => [
-            'message' => [
+        'table' => 'mimodulobasico', // nombre de la tabla en la base de datos = DEBE de ser igual al de la Clase principal del modulo
+        'primary' => 'id_mimodulobasico', // nombre de la clave primaria
+        'fields' => [ // campos de la tabla
+            'mensaje' => [
                 'type' => self::TYPE_STRING,
                 'validate' => 'isString',
                 'required' => true,
