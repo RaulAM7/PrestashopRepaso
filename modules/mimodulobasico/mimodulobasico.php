@@ -1,4 +1,8 @@
 <?php
+// Requires necesarios
+
+// Require de Models
+require_once dirname(__FILE__) . '/classes/MiModuloBasicoMessage.php';
 
 
 // Thew constant test -> Chequea si ahy una versión de Prestashop Preexistente
@@ -36,7 +40,7 @@ class MiModuloBasico extends Module
         }
         // Añadir configuraciones por defecto
         $defaultConfigurations = [
-            'MI_MODULO_BASICO_CONFIG_UNICA' => 'Valor de configuración UNICA',
+            'MI_MODULO_BASICO_MENSAJE' => 'Valor de configuración UNICA',
         ];
         foreach ($defaultConfigurations as $key => $value) {
             if (!Configuration::updateValue($key, $value)) {
@@ -58,7 +62,7 @@ class MiModuloBasico extends Module
         $tab->active = 1;
         $tab->class_name = 'AdminMiModuloBasico';
         $tab->name = [];
-        foreach(Language::getLanguages() as $lang){
+        foreach (Language::getLanguages() as $lang) {
             $tab->name[$lang['id_lang']] = 'Mi Modulo Basico';
         }
         // Asociar a la pestaña a la pestaña padre: Administrador de Modulos
@@ -91,7 +95,7 @@ class MiModuloBasico extends Module
             return false;
         }
         $defaultConfigurations = [
-            'MI_MODULO_BASICO_CONFIG_UNICA',
+            'MI_MODULO_BASICO_MENSAJE',
         ];
         foreach ($defaultConfigurations as $configuration) {
             if (!Configuration::deleteByName($configuration)) {
@@ -108,12 +112,12 @@ class MiModuloBasico extends Module
 
         // Eliminar la tabla de la base de datos
         $sql = 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'mimodulobasico`;';
-        
+
         if (!Db::getInstance()->execute($sql)) {
             return false;
         }
 
-        
+
 
 
         return true;
@@ -133,7 +137,7 @@ class MiModuloBasico extends Module
                     [
                         'type' => 'text',
                         'label' => $this->l('Mensaje personalizado'),
-                        'name' => 'MI_MODULO_BASICO_CONFIG_UNICA',
+                        'name' => 'MI_MODULO_BASICO_MENSAJE',
                         'size' => 64,
                         'required' => true
                     ],
@@ -148,13 +152,13 @@ class MiModuloBasico extends Module
         // Configuracion del helperForm de Prestashop
 
         $helper = new HelperForm();
-        
+
         $helper->module = $this;
         $helper->name_controller = $this->name;
         $helper->identifier = $this->identifier;
         $helper->token = Tools::getAdminTokenLite('AdminModules'); // Security Token
         $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name; // Current Index URL
-        $helper->fields_value['MI_MODULO_BASICO_CONFIG_UNICA'] = Configuration::get('MI_MODULO_BASICO_CONFIG_UNICA'); // Valor actual de la configuracion
+        $helper->fields_value['MI_MODULO_BASICO_MENSAJE'] = Configuration::get('MI_MODULO_BASICO_MENSAJE'); // Valor actual de la configuracion
         $helper->submit_action = 'submit' . $this->name; // Accion de envio del formulario
 
         return $helper->generateForm([$fields_form]);
@@ -170,18 +174,26 @@ class MiModuloBasico extends Module
 
         if (Tools::isSubmit('submit' . $this->name)) // Comprueba si se ha enviado el formulario con el boton submitMyModule
         {
-            $custom_setting = Tools::getValue('MI_MODULO_BASICO_CONFIG_UNICA');  // Recupera el valor enviado en el formulario
-            if (!empty($custom_setting)) {
-                Configuration::updateValue('MI_MODULO_BASICO_CONFIG_UNICA', $custom_setting);
-                $output .= $this->displayConfirmation($this->l('Configuración actualizada'));
+            $mensajeTexto = Tools::getValue('MI_MODULO_BASICO_MENSAJE'); // Recupera el valor enviado en el formulario
+
+            if (!empty($mensajeTexto)) {
+                // Guardar el mensaje en la base de datos usando el modelo
+                $mensaje = new MiModuloBasicoMessage();
+                $mensaje->message = $mensaje;
+                if ($mensaje->save()) {
+                    $output .= $this->displayConfirmation($this->l('Mensaje guardado correctamente')); // Muestra un mensaje de confirmación
+                } else {
+                    $output .= $this->displayError($this->l('Error al guardar el mensaje')); // Muestra un mensaje de error
+                }
             } else {
-                $output .= $this->displayError($this->l('Error: El campo no puede estar vacío'));
+                $output .= $this->displayError($this->l('El mensaje no puede estar vacío')); // Muestra un mensaje de error
             }
-            
+
         }
 
         // Genera y devuelve el formulario
         return $output . $this->renderForm(); // Devuelve el formulario
+        
     }
 
 
@@ -190,6 +202,10 @@ class MiModuloBasico extends Module
     // Hook Básico
     public function hookDisplayHome()
     {
+        // Recuperar todos los mensajes de la base de datos
+        $messages = MiModuloBasicoMessage::getCollection();
+        $this->context->smarty->assign('messages', $messages);  
+
         // Modificamos el metodo hookDisplayHome para leer el mensaje configurado por el usuario desde la base de datos
         return $this->display(__FILE__, 'views/templates/hook/displayHome.tpl');
     }
