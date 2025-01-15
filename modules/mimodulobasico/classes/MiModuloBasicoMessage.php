@@ -24,4 +24,11 @@ class MiModuloBasicoMessage extends ObjectModel
             ],
         ],
     ];
+
+    // Constructor
+
+    public function __construct($id = null, $id_lang = null)
+    {
+        parent::__construct($id, $id_lang);
+    }
 }
