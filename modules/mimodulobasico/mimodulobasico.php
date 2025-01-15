@@ -68,6 +68,19 @@ class MiModuloBasico extends Module
         $tab->add();
 
 
+        // Creamos la tabla de la base de datos
+
+        $sql = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mimodulobasico` (
+            `id_mimodulobasico` int(11) NOT NULL AUTO_INCREMENT,
+            `mensaje` varchar(255) NOT NULL,
+            PRIMARY KEY (`id_mimodulobasico`)
+        ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
+
+        // chequeamos si la tabla se ha creado correctamente
+        if (!Db::getInstance()->execute($sql)) {
+            return false;
+        }
+
 
         return true;
     }
