@@ -99,6 +99,23 @@ class MiModuloBasico extends Module
             }
         }
 
+        // Eliminar la TAB pestaña en el Front Office del Back Office
+        $id_tab = (int)Tab::getIdFromClassName('AdminMiModuloBasico');
+        if ($id_tab) {
+            $tab = new Tab($id_tab);
+            $tab->delete();
+        }
+
+        // Eliminar la tabla de la base de datos
+        $sql = 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'mimodulobasico`;';
+        
+        if (!Db::getInstance()->execute($sql)) {
+            return false;
+        }
+
+        
+
+
         return true;
     }
 
